@@ -1,0 +1,280 @@
+\documentclass[a4paper,12pt,twoside]{article}
+
+\usepackage[a4paper, inner=2cm, outer=2cm,top=2cm, bottom=2cm]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[portuges]{babel}
+\usepackage{aeguill}
+\usepackage{indentfirst}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{titlesec}
+\usepackage{titling}
+\usepackage{wrapfig}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{enumitem}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{color}
+\usepackage{setspace}
+\usepackage{titlesec}
+\usepackage{listings}
+
+\input{/home/lucas/docs/latex/lstset}
+
+\usepackage{fancyhdr} %pagenumber top right
+\fancyhf{}
+\fancyheadoffset{0cm}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\fancyhead[R]{\thepage}
+\fancypagestyle{plain}{%
+   \fancyhf{}%
+   \fancyhead[R]{\thepage}%
+}
+
+\renewcommand*{\thepage}{\footnotesize\arabic{page}}
+
+
+\titleformat{\section}
+  {\normalfont\fontsize{12}{15}\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}
+  {\normalfont\fontsize{12}{15}\bfseries}{\thesubsection}{1em}{}
+\titleformat{\subsubsection}
+  {\normalfont\fontsize{12}{15}\bfseries}{\thesubsubsection}{1em}{}
+
+\input{/home/lucas/docs/latex/hyper}
+
+\hypersetup{
+    pdftitle={Operação e Formação de preços},
+    pdfkeywords={Operação} {Planejamento} {Preços} {Despacho},
+    % pdftitle={My title},          % title
+    % pdfsubject={Subject},         % subject of the document
+    % pdfproducer={Producer},       % producer of the document
+    % pdfkeywords={keyword1} {key2} % list of keywords
+}
+
+\newenvironment{boldenv}
+{\bfseries}
+{}
+\onehalfspacing
+
+\title{Sistema para Detecção de Infestação Parasitária em Pequenos Ruminantes}
+\author{Lucas Budde Mior}
+
+\begin{document}
+\begin{titlepage}
+   \large
+   \begin{center}
+       \begin{boldenv}
+           UNIVERSIDADE FEDERAL DE SANTA CATARINA \\
+           DEPARTAMENTO DE ENGENHARIA ELÉTRICA \\
+           CURSO DE ENGENHARIA ELÉTRICA \\
+           \vspace*{2cm}
+
+           \vspace*{\fill}
+           Operação e Formação de Preços \\
+           \vspace*{1cm}
+           Relatório \\
+           \vspace*{1cm}
+           Planejamento e Regulação de Mercados de Energia Elétrica
+           \vspace*{\fill}
+
+           Lucas Budde Mior \\
+           \vspace{0.5cm}
+           Professor: Erlon Finardi
+
+           \vfill
+
+           Florianópolis
+       \end{boldenv}
+   \end{center}
+\end{titlepage}
+\renewcommand{\contentsname}{Sumário}
+
+\newgeometry{a4paper, inner=3cm, outer=2cm}
+\pagestyle{empty}
+\addtocontents{toc}{\protect\thispagestyle{empty}}
+\tableofcontents
+\newpage
+
+\pagestyle{plain}
+\section{Introdução} % revisão bibliográfica, justificativa e objetivos
+Esse trabalho demonstra a simulação de um sistema elétrico alimentado por uma usina hidrelétrica e 3 térmicas, durante um período de 20 horas.
+Para o despacho, é utilizado um modelo de otimização implementado em python utilizando a biblioteca Gurobipy.
+Os cálculos de formação de preço também foram implemetados em python, com base no despacho otimizado.
+
+\begin{figure}[h!]
+    \centering
+  \includegraphics[width=\linewidth]{sistema.png}
+  \caption{Apresentação do sistema}\label{fig:sistema}
+\end{figure}
+
+\section{Questão 1 - Afluência Hidráulica e Demanda de Cada Barra}
+O volume afluente é modelado como uma distribuição uniforme entre \(0\) e \(100hm³\).
+Os valores sortados foram os seguintes:
+
+\begin{center}
+    \begin{tabular}{ c c c }
+        Período & Volume \\
+        0  & 77 \\
+        1  & 28 \\
+        2  & 17 \\
+        3  & 41 \\
+        4  & 97 \\
+        5  & 18 \\
+        6  & 13 \\
+        7  & 21 \\
+        8  & 95 \\
+        9  & 0 \\
+        10 & 62 \\
+        11 & 4 \\
+        12 & 30 \\
+        13 & 58 \\
+        14 & 23 \\
+        15 & 87 \\
+        16 & 67 \\
+        17 & 60 \\
+        18 & 47 \\
+        19 & 69
+    \end{tabular}
+\end{center}
+As demandas por barra, por sua vez, são modeladas como uma distribuição normal com média 25 e desvio padrão 2, com exceção da barra 1 que não possui carga.
+As demandas por barra foram as seguintes:
+
+\begin{center}
+    \begin{tabular}{ c c c c }
+        Período & L1 & L2 & L3 \\
+        0  & 0 & 24 & 28 \\
+        1  & 0 & 24 & 27 \\
+        2  & 0 & 25 & 23 \\
+        3  & 0 & 22 & 25 \\
+        4  & 0 & 22 & 25 \\
+        5  & 0 & 25 & 27 \\
+        6  & 0 & 24 & 23 \\
+        7  & 0 & 29 & 27 \\
+        8  & 0 & 25 & 24 \\
+        9  & 0 & 25 & 28 \\
+        10 & 0 & 26 & 22 \\
+        11 & 0 & 25 & 25 \\
+        12 & 0 & 26 & 22 \\
+        13 & 0 & 30 & 24 \\
+        14 & 0 & 23 & 24 \\
+        15 & 0 & 24 & 24 \\
+        16 & 0 & 25 & 27 \\
+        17 & 0 & 25 & 21 \\
+        18 & 0 & 27 & 26 \\
+        19 & 0 & 25 & 26
+    \end{tabular}
+\end{center}
+
+\newpage
+\section{Questão 2 - Despacho ótimo de cada usina e custo marginal de cada barra}
+
+\newpage
+\section{Questão 3 - Geração das Hidrelétricas}
+\begin{figure}[h!]
+    \centering
+  \includegraphics[width=\linewidth]{foto.png}
+  \caption{Geração das Hidrelétricas}\label{q3a}
+\end{figure}
+
+\begin{figure}[h!]
+    \centering
+  \includegraphics[width=\linewidth]{foto.png}
+  \caption{Número de unidades despachadas}\label{q3b}
+\end{figure}
+
+\newpage
+\section{Questão 4 - Rendimento Global e Produtibilidade}
+
+\begin{figure}[h!]
+    \centering
+  \includegraphics[width=\linewidth]{foto.png}
+  \caption{Rendimento Global}\label{q4a}
+\end{figure}
+
+\begin{figure}[h!]
+    \centering
+  \includegraphics[width=\linewidth]{foto.png}
+  \caption{Produtibilidade}\label{q4b}
+\end{figure}
+
+\newpage
+\section{Demanda Residual}
+Aqui é observado o balanço de potência para cada estágio considerando apenas a geração eólica e hidrelétrica.
+A demanda residual deverá ser atendida por termelétricas.
+
+\begin{figure}[h!]
+    \centering
+  \includegraphics[width=\linewidth]{foto.png}
+  \caption{Balanço de Potência}\label{q5}
+\end{figure}
+
+\newpage
+\section{Questão 6 - Geração Térmica}
+
+\begin{figure}[h!]
+    \centering
+  \includegraphics[width=0.7\linewidth]{foto.png}
+  \caption{Informações das Usinas Termelétricas}\label{termicas}
+\end{figure}
+
+Considerando a tabela da figura \ref{termicas},
+foi optado por priorizar o uso da térmica 1,
+e evitar desligar a térmica 1 e 2.
+Dessa forma pode-se evitar ao máximo o uso da usina mais cara (3).
+
+Nota-se que em alguns momentos foi necessário reduzir a geração das térmicas 1 e 2,
+para que no período seguinte, com menor demanda, fosse possível realizar o despacho.
+Isso acarretou em um aumento no uso da térmica 3 e no custo total de operação.
+
+Nota-se que, mesmo utilizando uma usina hipotética com geração e rampa ilimitadas,
+ainda não é simples realizar esse despacho.
+O custo total foi de R\$ \(1350260\).
+
+\begin{figure}[h!]
+    \centering
+  \includegraphics[width=\linewidth]{foto.png}
+  \caption{Geração Térmica}\label{q6}
+\end{figure}
+
+\newpage
+\section{Questão 7 - Produtibilidade Constante}
+Agora, a geração das hidrelétricas é modelada como constante.
+O custo total foi de R\$ \(1336180\).
+Ao analisar os resultados, não houve diferença significativa para essa simulação
+a respeito do despacho das usinas termelétricas, no entanto,
+num contexto maior, o resultado poderia ser comprometedor.
+
+A operação inadequada das térmicas (muitas ligamentos e desligamentos,
+uso de usinas mais caras) geraria um custo muito maior,
+devido a pequenas imprecisões na modelagem das usinas hidrelétricas.
+Dessa forma, esse modelo deve ser utilizado somente
+no planejamento a longo prazo, não para a operação diária.
+
+\begin{figure}[h!]
+    \centering
+  \includegraphics[width=0.7\linewidth]{foto.png}
+  \caption{Produtibilidade constante para cada usina}\label{q7a}
+\end{figure}
+
+\begin{figure}[h!]
+    \centering
+  \includegraphics[width=\linewidth]{foto.png}
+  \caption{Geração hidrelétrica para produtibilidade constante}\label{q7b}
+\end{figure}
+
+\begin{figure}[h!]
+    \centering
+  \includegraphics[width=\linewidth]{foto.png}
+  \caption{Balanço de potência para produtibilidade constante}\label{q7c}
+\end{figure}
+
+\begin{figure}[h!]
+    \centering
+  \includegraphics[width=\linewidth]{foto.png}
+  \caption{Geração térmica para produtibilidade constante das hidrelétricas}\label{q7d}
+\end{figure}
+
+\end{document}
