@@ -108,3 +108,6 @@ for trio in range(20):
     print(f"CMO: {linha[1:]}")
 
 print("\n## Questão 3: Contabilização sem existência de contratação ##")
+print("\n## Questão 4: ##")
+print("\n## Questão 5: ##")
+print("\n## Questão 6: ##")
