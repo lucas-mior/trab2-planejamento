@@ -69,6 +69,7 @@ def roda_caso(L_b1, L_b2, L_b3, Y):
         linha.append(fobj)
     else:
         print('Inviável!!!')
+        # exit()
     print(f'gt1: {gt1}')
     print(f'gt2: {gt2}')
     print(f'gt3: {gt3}')
@@ -101,7 +102,8 @@ def CMO(D1, D2, D3, Y):
     return linha, CMO_1, CMO_2, CMO_3
 
 
-linha = CMO(L_b1[0], L_b2[0], L_b3[0], Y[0])
-print(f"CMO: {linha}")
+for trio in range(20):
+    linha = CMO(L_b1[trio], L_b2[trio], L_b3[trio], Y[trio])
+    print(f"CMO: {linha[1:]}")
 
 print("\n## Questão 3: Contabilização sem existência de contratação ##")
