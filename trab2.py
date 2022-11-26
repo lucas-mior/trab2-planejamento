@@ -1,7 +1,8 @@
 from gurobipy import GRB, Model
+import pprint
 # import numpy as np
 # import gurobipy as gp
-
+pp = pprint.PrettyPrinter(indent=4)
 print("\n## Questão 1: Sorteio com 20 trios de demanda e afluência ##")
 # Para demanada de 25MW e desvio padrão de 2MW:
 media = 25  # mu, demanda
@@ -64,13 +65,15 @@ def roda_caso(L_b1, L_b2, L_b3, Y):
     m.params.MIPGap = 0.000001
     m.optimize()
     if m.status == GRB.Status.OPTIMAL:
+        mvars = m.getVars()
+        names = m.getAttr('VarName', mvars)
+        values = m.getAttr('X', mvars)
+        result = dict(zip(names, values))
         fobj = m.objval
-        GT1 = m.getAttr('x', m.getVars())
-        linha = GT1
-        linha.append(fobj)
     else:
         print('Inviável!!!')
         # exit()
+    print("\nDespacho ótimo: ")
     print(f'gt1: {gt1}')
     print(f'gt2: {gt2}')
     print(f'gt3: {gt3}')
@@ -82,10 +85,10 @@ def roda_caso(L_b1, L_b2, L_b3, Y):
     print(f'f12: {f12}')
     print(f'f13: {f13}')
     print(f'f32: {f32}')
-    print(f'linha: {linha}')
+    # print(f'linha: {linha}')
     print('FALTA CALCULAR: _f, cmo_1, cmo_2, cmo_3, receita_gerada, custo_mercado, EM, EMT')
 
-    return linha, fobj
+    return result, fobj
 
 
 def CMO(D1, D2, D3, Y):
@@ -97,15 +100,16 @@ def CMO(D1, D2, D3, Y):
     CMO_1 = D1_incr[1] - custo_base[1]
     CMO_2 = D2_incr[1] - custo_base[1]
     CMO_3 = D3_incr[1] - custo_base[1]
-    linha = custo_base[0]
-    linha = linha + [CMO_1, CMO_2, CMO_3]
+    pp.pprint(custo_base[0])
+    # linha = linha + [CMO_1, CMO_2, CMO_3]
 
-    return linha, CMO_1, CMO_2, CMO_3
+    # return linha, CMO_1, CMO_2, CMO_3
+    return CMO_1, CMO_2, CMO_3
 
 
 for trio in range(20):
     linha = CMO(L_b1[trio], L_b2[trio], L_b3[trio], Y[trio])
-    print(f"CMO: {linha[1:]}")
+    print(f"CMO: {linha}")
 
 print("\n## Questão 3: Contabilização sem existência de contratação ##")
 print("\n## Questão 4: ##")
