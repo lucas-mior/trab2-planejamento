@@ -51,7 +51,6 @@ def roda_caso(L_b1, L_b2, L_b3, Y):
 
     m.addConstr(y == Y, 'afluência')
     m.addConstr(v + q + s == y, 'balanço de volume')
-    # m.addConstr(v - q - s + y <= 100, 'balanço de volume')
     m.addConstr(0.9*q + 0.1*v - f12 - f13 == L_b1, 'barra 1')
     m.addConstr(gt1 + gt2 + f12 + f32 == L_b2, 'barra 2')
     m.addConstr(gt3 + f13 - f32 == L_b3, 'barra 3')
