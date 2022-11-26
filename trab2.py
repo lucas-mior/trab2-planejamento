@@ -38,21 +38,23 @@ print("\n## Questão 2: Para cada trio sorteado, obter o despacho ótimo")
 def roda_caso(L_b1, L_b2, L_b3, Y):
     m = Model('Custo')
     inf = GRB.INFINITY
-    gt1 = m.addVar(lb=0,   ub=30,     name='potência termica 1')
-    gt2 = m.addVar(lb=0,   ub=20,     name='potência termica 2')
-    gt3 = m.addVar(lb=0,   ub=100,    name='potência termica 3')
+    gt1 = m.addVar(lb=0,   ub=30,     name='gt1')
+    gt2 = m.addVar(lb=0,   ub=20,     name='gt2')
+    gt3 = m.addVar(lb=0,   ub=100,    name='gt3')
     alfa = m.addVar(lb=0,  ub=inf,    name='alfa')
     v = m.addVar(lb=0,     ub=100,    name='volume final')
     y = m.addVar(lb=0,     ub=300,    name='afluencia')
     s = m.addVar(lb=0,     ub=1*10e8, name='vertimento')
     q = m.addVar(lb=0,     ub=100,    name='vazão turbinada')
-    f13 = m.addVar(lb=-15, ub=15,     name='Fluxo LT 1-3 (f1)')
-    f12 = m.addVar(lb=-15, ub=15,     name='Fluxo LT 1-2 (f2)')
-    f32 = m.addVar(lb=-10, ub=10,     name='Fluxo LT 3-2 (f3)')
+    gh = m.addVar(lb=0,    ub=100,    name='ghidraulica')
+    f13 = m.addVar(lb=-15, ub=15,     name='F13 (f1)')
+    f12 = m.addVar(lb=-15, ub=15,     name='F12 (f2)')
+    f32 = m.addVar(lb=-10, ub=10,     name='F32 (f3)')
 
     m.addConstr(y == Y, 'afluência')
     m.addConstr(v + q + s == y, 'balanço de volume')
-    m.addConstr(0.9*q + 0.1*v - f12 - f13 == L_b1, 'barra 1')
+    m.addConstr(gh == 0.9*q + 0.1*v, 'balanço de volume')
+    m.addConstr(gh - f12 - f13 == L_b1, 'barra 1')
     m.addConstr(gt1 + gt2 + f12 + f32 == L_b2, 'barra 2')
     m.addConstr(gt3 + f13 - f32 == L_b3, 'barra 3')
     m.addConstr(alfa + 6*v >= 287.5, 'corte 1')
@@ -90,18 +92,30 @@ def CMO(custo_base, D1, D2, D3, Y):
 
 
 print("\nDespacho ótimo: ")
-results = []
+opt = []
 for trio in range(20):
     r = roda_caso(L_b1[trio], L_b2[trio], L_b3[trio], Y[trio])
     print(f"Período {trio}:")
     pp.pprint(r)
-    results.append(r)
+    opt.append(r)
 
 for trio in range(20):
-    linha = CMO(results[trio]['custo'], L_b1[trio], L_b2[trio], L_b3[trio], Y[trio])
-    print(f"CMO {trio}: {linha}")
+    linha = CMO(opt[trio]['custo'], L_b1[trio], L_b2[trio], L_b3[trio], Y[trio])
+    opt[trio]['cmo'] = linha
+    # print(f"CMO {trio}: {linha}")
 
 print("\n## Questão 3: Contabilização sem existência de contratação ##")
+for trio in range(20):
+    b1 = opt[trio]['cmo'][0] * opt[trio]['ghidraulica']
+    b2 = opt[trio]['cmo'][1] * opt[trio]['gt3']
+    b3 = opt[trio]['cmo'][2] * (opt[trio]['gt1'] + opt[trio]['gt2'])
+    opt[trio]['receita'] = round(b1 + b2 + b3, 2)
+    b2 = opt[trio]['cmo'][1] * L_b2[trio]
+    b3 = opt[trio]['cmo'][2] * L_b3[trio]
+    opt[trio]['custo_mercado'] = round(b2 + b3, 2)
+
+pp.pprint(opt)
+
 print("\n## Questão 4: ##")
 print("\n## Questão 5: ##")
 print("\n## Questão 6: ##")
