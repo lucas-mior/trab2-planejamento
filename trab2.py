@@ -109,12 +109,12 @@ for trio in range(20):
     b1 = opt[trio]['cmo'][0] * opt[trio]['ghidraulica']
     b2 = opt[trio]['cmo'][1] * opt[trio]['gt3']
     b3 = opt[trio]['cmo'][2] * (opt[trio]['gt1'] + opt[trio]['gt2'])
-    opt[trio]['receita'] = round(b1 + b2 + b3, 2)
+    opt[trio]['custo_receita'] = round(b1 + b2 + b3, 2)
     b2 = opt[trio]['cmo'][1] * L_b2[trio]
     b3 = opt[trio]['cmo'][2] * L_b3[trio]
     opt[trio]['custo_mercado'] = round(b2 + b3, 2)
     opt[trio]['EM'] = opt[trio]['custo_mercado'] - opt[trio]['custo']
-    opt[trio]['EMT'] = opt[trio]['custo_mercado'] - opt[trio]['receita']
+    opt[trio]['EMT'] = opt[trio]['custo_mercado'] - opt[trio]['custo_receita']
 
 pp.pprint(opt)
 
