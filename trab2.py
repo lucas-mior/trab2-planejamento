@@ -69,7 +69,7 @@ def roda_caso(L_b1, L_b2, L_b3, Y):
         names = m.getAttr('VarName', mvars)
         values = m.getAttr('X', mvars)
         result = dict(zip(names, values))
-        fobj = m.objval
+        result['custo'] = fobj = m.objval
     else:
         print('Inviável!!!')
         # exit()
@@ -85,8 +85,6 @@ def roda_caso(L_b1, L_b2, L_b3, Y):
     print(f'f12: {f12}')
     print(f'f13: {f13}')
     print(f'f32: {f32}')
-    # print(f'linha: {linha}')
-    print('FALTA CALCULAR: _f, cmo_1, cmo_2, cmo_3, receita_gerada, custo_mercado, EM, EMT')
 
     return result, fobj
 
