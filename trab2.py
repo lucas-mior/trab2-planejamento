@@ -69,45 +69,37 @@ def roda_caso(L_b1, L_b2, L_b3, Y):
         names = m.getAttr('VarName', mvars)
         values = m.getAttr('X', mvars)
         result = dict(zip(names, values))
-        result['custo'] = fobj = m.objval
+        result['custo'] = m.objval
     else:
         print('Inviável!!!')
         # exit()
-    print("\nDespacho ótimo: ")
-    print(f'gt1: {gt1}')
-    print(f'gt2: {gt2}')
-    print(f'gt3: {gt3}')
-    print(f'alfa: {alfa}')
-    print(f'v: {v}')
-    print(f'y: {y}')
-    print(f's: {s}')
-    print(f'q: {q}')
-    print(f'f12: {f12}')
-    print(f'f13: {f13}')
-    print(f'f32: {f32}')
 
-    return result, fobj
+    return result
 
 
-def CMO(D1, D2, D3, Y):
-    custo_base = roda_caso(D1, D2, D3, Y)
+def CMO(custo_base, D1, D2, D3, Y):
     D1_incr = roda_caso(D1+1, D2, D3, Y)
     D2_incr = roda_caso(D1, D2+1, D3, Y)
     D3_incr = roda_caso(D1, D2, D3+1, Y)
 
-    CMO_1 = D1_incr[1] - custo_base[1]
-    CMO_2 = D2_incr[1] - custo_base[1]
-    CMO_3 = D3_incr[1] - custo_base[1]
-    pp.pprint(custo_base[0])
-    # linha = linha + [CMO_1, CMO_2, CMO_3]
+    CMO_1 = round(D1_incr['custo'] - custo_base, 2)
+    CMO_2 = round(D2_incr['custo'] - custo_base, 2)
+    CMO_3 = round(D3_incr['custo'] - custo_base, 2)
 
-    # return linha, CMO_1, CMO_2, CMO_3
     return CMO_1, CMO_2, CMO_3
 
 
+print("\nDespacho ótimo: ")
+results = []
 for trio in range(20):
-    linha = CMO(L_b1[trio], L_b2[trio], L_b3[trio], Y[trio])
-    print(f"CMO: {linha}")
+    r = roda_caso(L_b1[trio], L_b2[trio], L_b3[trio], Y[trio])
+    print(f"Período {trio}:")
+    pp.pprint(r)
+    results.append(r)
+
+for trio in range(20):
+    linha = CMO(results[trio]['custo'], L_b1[trio], L_b2[trio], L_b3[trio], Y[trio])
+    print(f"CMO {trio}: {linha}")
 
 print("\n## Questão 3: Contabilização sem existência de contratação ##")
 print("\n## Questão 4: ##")
