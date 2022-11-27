@@ -135,19 +135,19 @@ contr.loc[0] = zeros
 
 # com contratos
 contr2 = pd.DataFrame(columns=['gt1', 'gt2', 'gt3', 'gh', 'L_b2', 'L_b3'])
-contr2.loc[0] = [20, 10, 5, 15, 25, 25]
+contr2.loc[0] = [15, 0, 0, 10, 0, 0]
 
 
-def contabilizacao(df_completo, df_contratações):
+def contabilizacao(opt, contrato):
     # geradores
     df_mcp = pd.DataFrame()
-    df_mcp['MCP_gt1'] = (df_completo.gt1 - df_contratações.gt1.loc[0]) * df_completo.cmo2.values
-    df_mcp['MCP_gt2'] = (df_completo.gt2 - df_contratações.gt2.loc[0]) * df_completo.cmo2.values
-    df_mcp['MCP_gt3'] = (df_completo.gt3 - df_contratações.gt3.loc[0]) * df_completo.cmo3.values
-    df_mcp['MCP_gh'] = (df_completo.q - df_contratações.gt1.loc[0]) * df_completo.cmo1.values
+    df_mcp['MCP_gt1'] = (opt.gt1 - contrato.gt1.loc[0]) * opt.cmo2.values
+    df_mcp['MCP_gt2'] = (opt.gt2 - contrato.gt2.loc[0]) * opt.cmo2.values
+    df_mcp['MCP_gt3'] = (opt.gt3 - contrato.gt3.loc[0]) * opt.cmo3.values
+    df_mcp['MCP_gh'] = (opt.q - contrato.gt1.loc[0]) * opt.cmo1.values
     # consumidores
-    df_mcp['MCP_B2'] = (df_completo.L_b2 - df_contratações.L_b2.loc[0]) *  df_completo.cmo2.values
-    df_mcp['MCP_B3'] = (df_completo.L_b3 - df_contratações.L_b3.loc[0]) *  df_completo.cmo3.values
+    df_mcp['MCP_B2'] = (opt.L_b2 - contrato.L_b2.loc[0]) *  opt.cmo2.values
+    df_mcp['MCP_B3'] = (opt.L_b3 - contrato.L_b3.loc[0]) *  opt.cmo3.values
     df_mcp['EMT'] = df_mcp[['MCP_gt1', 'MCP_gt2', 'MCP_gt3', 'MCP_gh']].sum(axis=1) - df_mcp[['MCP_B2', 'MCP_B3']].sum(axis=1).values
     # "MCP ---> Mercado de Curto Prazo"
     return df_mcp
