@@ -46,7 +46,7 @@ def roda_caso(L_b1, L_b2, L_b3, Y):
     v = m.addVar(lb=0,     ub=100,    name='volume final')
     y = m.addVar(lb=0,     ub=300,    name='afluencia')
     s = m.addVar(lb=0,     ub=1*10e8, name='vertimento')
-    q = m.addVar(lb=0,     ub=100,    name='vazão turbinada')
+    q = m.addVar(lb=0,     ub=100,    name='q')
     gh = m.addVar(lb=0,    ub=100,    name='gh')
     f13 = m.addVar(lb=-15, ub=15,     name='F13 (f1)')
     f12 = m.addVar(lb=-15, ub=15,     name='F12 (f2)')
@@ -102,16 +102,18 @@ for trio in range(20):
 
 for trio in range(20):
     linha = CMO(opt[trio]['custo'], L_b1[trio], L_b2[trio], L_b3[trio], Y[trio])
-    opt[trio]['cmo'] = linha
+    opt[trio]['cmo1'] = linha[0]
+    opt[trio]['cmo2'] = linha[1]
+    opt[trio]['cmo3'] = linha[2]
     # print(f"CMO {trio}: {linha}")
 
 print("\n## Questão 3: Contabilização sem existência de contratação ##")
 for trio in range(20):
-    b1 = opt[trio]['cmo'][0] * opt[trio]['gh']
-    b2 = opt[trio]['cmo'][1] * opt[trio]['gt3']
-    b3 = opt[trio]['cmo'][2] * (opt[trio]['gt1'] + opt[trio]['gt2'])
+    b1 = opt[trio]['cmo1'] * opt[trio]['gh']
+    b2 = opt[trio]['cmo2'] * opt[trio]['gt3']
+    b3 = opt[trio]['cmo3'] * (opt[trio]['gt1'] + opt[trio]['gt2'])
     opt[trio]['custo_receita'] = round(b1 + b2 + b3, 2)
-    CMO = max(opt[trio]['cmo'])
+    CMO = max(opt[trio]['cmo1'], opt[trio]['cmo2'], opt[trio]['cmo3'])
     L = L_b1[trio] + L_b2[trio] + L_b3[trio]
     opt[trio]['custo_mercado'] = round(CMO*L, 2)
     opt[trio]['EM'] = opt[trio]['custo_mercado'] - opt[trio]['custo']
@@ -119,9 +121,39 @@ for trio in range(20):
 
 df = pd.DataFrame.from_records(opt)
 print(df)
+df['L_b1'] = L_b1
+df['L_b2'] = L_b2
+df['L_b3'] = L_b3
 
-#pp.pprint(opt)
+# pp.pprint(opt)
 
 print("\n## Questão 4: ##")
+# sem contratos
+contr = pd.DataFrame(columns=['gt1', 'gt2', 'gt3', 'gh', 'L_b2', 'L_b3'])
+zeros = [0, 0, 0, 0, 0, 0]
+contr.loc[0] = zeros
+
+# com contratos
+contr2 = pd.DataFrame(columns=['gt1', 'gt2', 'gt3', 'gh', 'L_b2', 'L_b3'])
+contr2.loc[0] = [20, 10, 5, 15, 25, 25]
+
+
+def contabilizacao(df_completo, df_contratações):
+    # geradores
+    df_mcp = pd.DataFrame()
+    df_mcp['MCP_gt1'] = (df_completo.gt1 - df_contratações.gt1.loc[0]) * df_completo.cmo2.values
+    df_mcp['MCP_gt2'] = (df_completo.gt2 - df_contratações.gt2.loc[0]) * df_completo.cmo2.values
+    df_mcp['MCP_gt3'] = (df_completo.gt3 - df_contratações.gt3.loc[0]) * df_completo.cmo3.values
+    df_mcp['MCP_gh'] = (df_completo.q - df_contratações.gt1.loc[0]) * df_completo.cmo1.values
+    # consumidores
+    df_mcp['MCP_B2'] = (df_completo.L_b2 - df_contratações.L_b2.loc[0]) *  df_completo.cmo2.values
+    df_mcp['MCP_B3'] = (df_completo.L_b3 - df_contratações.L_b3.loc[0]) *  df_completo.cmo3.values
+    df_mcp['EMT'] = df_mcp[['MCP_gt1', 'MCP_gt2', 'MCP_gt3', 'MCP_gh']].sum(axis=1) - df_mcp[['MCP_B2', 'MCP_B3']].sum(axis=1).values
+    # "MCP ---> Mercado de Curto Prazo"
+    return df_mcp
+
+
+s_contrato = contabilizacao(df, contr)
+c_contrato = contabilizacao(df, contr2)
 print("\n## Questão 5: ##")
 print("\n## Questão 6: ##")
