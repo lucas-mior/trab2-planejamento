@@ -120,7 +120,8 @@ for trio in range(20):
     opt[trio]['EMT'] = opt[trio]['custo_mercado'] - opt[trio]['custo_receita']
 
 df = pd.DataFrame.from_records(opt)
-print(df)
+print(df[['gt1', 'gt2', 'gt3', 'gh', 'custo']])
+exit()
 df['L1'] = L1
 df['L2'] = L2
 df['L3'] = L3
