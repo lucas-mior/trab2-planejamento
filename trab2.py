@@ -157,5 +157,9 @@ def contabilizacao(opt, contrato):
 
 s_contrato = contabilizacao(df, contr)
 c_contrato = contabilizacao(df, contr2)
+print("sem contrato:")
+print(s_contrato)
+print("com contrato:")
+print(c_contrato)
 print("\n## Questão 5: ##")
 print("\n## Questão 6: ##")
