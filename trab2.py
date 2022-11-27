@@ -1,4 +1,5 @@
 from gurobipy import GRB, Model
+import pandas as pd
 import pprint
 # import numpy as np
 # import gurobipy as gp
@@ -116,7 +117,10 @@ for trio in range(20):
     opt[trio]['EM'] = opt[trio]['custo_mercado'] - opt[trio]['custo']
     opt[trio]['EMT'] = opt[trio]['custo_mercado'] - opt[trio]['custo_receita']
 
-pp.pprint(opt)
+df = pd.DataFrame.from_records(opt)
+print(df)
+
+#pp.pprint(opt)
 
 print("\n## Questão 4: ##")
 print("\n## Questão 5: ##")
