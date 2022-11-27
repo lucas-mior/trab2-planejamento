@@ -111,7 +111,8 @@ for trio in range(20):
     b3 = opt[trio]['cmo'][2] * (opt[trio]['gt1'] + opt[trio]['gt2'])
     opt[trio]['custo_receita'] = round(b1 + b2 + b3, 2)
     CMO = max(opt[trio]['cmo'])
-    opt[trio]['custo_mercado'] = round(CMO*(L_b1[trio] + L_b2[trio] + L_b3[trio]), 2)
+    L = L_b1[trio] + L_b2[trio] + L_b3[trio]
+    opt[trio]['custo_mercado'] = round(CMO*L, 2)
     opt[trio]['EM'] = opt[trio]['custo_mercado'] - opt[trio]['custo']
     opt[trio]['EMT'] = opt[trio]['custo_mercado'] - opt[trio]['custo_receita']
 
