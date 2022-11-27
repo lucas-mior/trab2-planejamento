@@ -11,19 +11,19 @@ desvio_padrao = 2  # sigma, variação na demanda
 
 # L1 = [0] * 20
 L1 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 print(f"Demanda barra 1 L1: {L1}")
 
 # L2 = list(np.random.normal(media, desvio_padrao, 20))
 # L2 = [round(item) for item in L2]
 L2 = [24, 24, 25, 22, 22, 25, 24, 29, 25, 25,
-        26, 25, 26, 30, 23, 24, 25, 25, 27, 25]
+      26, 25, 26, 30, 23, 24, 25, 25, 27, 25]
 print(f"Demanda barra 2 L2: {L2}")
 
 # L3 = list(np.random.normal(media, desvio_padrao, 20))
 # L3 = [round(item) for item in L3]
 L3 = [28, 27, 23, 25, 25, 27, 23, 27, 24, 28,
-        22, 25, 22, 24, 24, 24, 27, 21, 26, 26]
+      22, 25, 22, 24, 24, 24, 27, 21, 26, 26]
 print(f"Demanda barra 3 L3: {L3}")
 
 # Y = list(np.random.uniform(0, 100, 20))
