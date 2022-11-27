@@ -146,9 +146,11 @@ def contabilizacao(opt, contrato):
     df_mcp['MCP_gt3'] = (opt.gt3 - contrato.gt3.loc[0]) * opt.cmo3.values
     df_mcp['MCP_gh'] = (opt.q - contrato.gt1.loc[0]) * opt.cmo1.values
     # consumidores
-    df_mcp['MCP_B2'] = (opt.L_b2 - contrato.L_b2.loc[0]) *  opt.cmo2.values
-    df_mcp['MCP_B3'] = (opt.L_b3 - contrato.L_b3.loc[0]) *  opt.cmo3.values
-    df_mcp['EMT'] = df_mcp[['MCP_gt1', 'MCP_gt2', 'MCP_gt3', 'MCP_gh']].sum(axis=1) - df_mcp[['MCP_B2', 'MCP_B3']].sum(axis=1).values
+    df_mcp['MCP_B2'] = (opt.L_b2 - contrato.L_b2.loc[0]) * opt.cmo2.values
+    df_mcp['MCP_B3'] = (opt.L_b3 - contrato.L_b3.loc[0]) * opt.cmo3.values
+    a = df_mcp[['MCP_gt1', 'MCP_gt2', 'MCP_gt3', 'MCP_gh']].sum(axis=1)
+    b = -df_mcp[['MCP_B2', 'MCP_B3']].sum(axis=1).values
+    df_mcp['EMT'] = a + b
     # "MCP ---> Mercado de Curto Prazo"
     return df_mcp
 
