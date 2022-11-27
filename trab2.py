@@ -121,7 +121,6 @@ for trio in range(20):
 
 df = pd.DataFrame.from_records(opt)
 print(df[['gt1', 'gt2', 'gt3', 'gh', 'custo']])
-exit()
 df['L1'] = L1
 df['L2'] = L2
 df['L3'] = L3
