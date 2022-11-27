@@ -135,7 +135,7 @@ contr.loc[0] = zeros
 
 # com contratos
 contr2 = pd.DataFrame(columns=['gt1', 'gt2', 'gt3', 'gh', 'L2', 'L3'])
-contr2.loc[0] = [15, 0, 0, 10, 0, 0]
+contr2.loc[0] = [20, 10, 5, 15, 25, 25]
 
 
 def contabilizacao(opt, contrato):
