@@ -47,7 +47,7 @@ def roda_caso(L_b1, L_b2, L_b3, Y):
     y = m.addVar(lb=0,     ub=300,    name='afluencia')
     s = m.addVar(lb=0,     ub=1*10e8, name='vertimento')
     q = m.addVar(lb=0,     ub=100,    name='vazão turbinada')
-    gh = m.addVar(lb=0,    ub=100,    name='ghidraulica')
+    gh = m.addVar(lb=0,    ub=100,    name='gh')
     f13 = m.addVar(lb=-15, ub=15,     name='F13 (f1)')
     f12 = m.addVar(lb=-15, ub=15,     name='F12 (f2)')
     f32 = m.addVar(lb=-10, ub=10,     name='F32 (f3)')
@@ -107,7 +107,7 @@ for trio in range(20):
 
 print("\n## Questão 3: Contabilização sem existência de contratação ##")
 for trio in range(20):
-    b1 = opt[trio]['cmo'][0] * opt[trio]['ghidraulica']
+    b1 = opt[trio]['cmo'][0] * opt[trio]['gh']
     b2 = opt[trio]['cmo'][1] * opt[trio]['gt3']
     b3 = opt[trio]['cmo'][2] * (opt[trio]['gt1'] + opt[trio]['gt2'])
     opt[trio]['custo_receita'] = round(b1 + b2 + b3, 2)
