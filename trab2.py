@@ -44,13 +44,13 @@ def roda_caso(L1, L2, L3, Y):
     gt3 = m.addVar(lb=0,   ub=100,    name='gt3')
     alfa = m.addVar(lb=0,  ub=inf,    name='alfa')
     v = m.addVar(lb=0,     ub=100,    name='volume final')
-    y = m.addVar(lb=0,     ub=300,    name='afluencia')
+    y = m.addVar(lb=0,     ub=300,    name='y')
     s = m.addVar(lb=0,     ub=1*10e8, name='vertimento')
     q = m.addVar(lb=0,     ub=100,    name='q')
     gh = m.addVar(lb=0,    ub=100,    name='gh')
-    f13 = m.addVar(lb=-15, ub=15,     name='F13 (f1)')
-    f12 = m.addVar(lb=-15, ub=15,     name='F12 (f2)')
-    f32 = m.addVar(lb=-10, ub=10,     name='F32 (f3)')
+    f13 = m.addVar(lb=-15, ub=15,     name='f13')
+    f12 = m.addVar(lb=-15, ub=15,     name='f12')
+    f32 = m.addVar(lb=-10, ub=10,     name='f32')
 
     m.addConstr(y == Y, 'afluência')
     m.addConstr(v + q + s == y, 'balanço de volume')
@@ -120,10 +120,12 @@ for trio in range(20):
     opt[trio]['EMT'] = opt[trio]['custo_mercado'] - opt[trio]['custo_receita']
 
 df = pd.DataFrame.from_records(opt)
-print(df[['gt1', 'gt2', 'gt3', 'gh', 'custo']])
+print(df[['gt1', 'gt2', 'gt3', 'gh', 'y', 'q', 'custo']])
 df['L1'] = L1
 df['L2'] = L2
 df['L3'] = L3
+
+print(df[['alfa', 'f12', 'f13', 'f32', 'cmo1', 'cmo2', 'cmo3', 'EM', 'EMT']])
 
 # pp.pprint(opt)
 
